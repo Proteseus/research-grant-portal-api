@@ -14,9 +14,20 @@ model User {
   passwordHash String
   role        Role
   createdAt   DateTime @default(now())
+  active      Boolean  @default(false)
+  verified    Boolean  @default(false)
 
   proposals   Proposal[]
   notifications Notification[]
+  passwordReset PasswordReset?
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
 }
 
 enum Role {
