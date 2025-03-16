@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import authRoutes from './routes/authRoutes.js';
+import callRoutes from './routes/callRoutes.js';
+import proposalRoutes from './routes/proposalRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,6 +19,10 @@ app.use(express.json());
 
 // Routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/calls', callRoutes);
+app.use('/api/v1/proposals', proposalRoutes);
+app.use('/api/v1/users', userRoutes);
+
 
 // Health check
 app.get('/api/v1/health', (req, res) => {
