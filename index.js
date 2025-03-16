@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import callRoutes from './routes/callRoutes.js';
 import proposalRoutes from './routes/proposalRoutes.js';
@@ -18,6 +19,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // Routes
+app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/calls', callRoutes);
 app.use('/api/v1/proposals', proposalRoutes);
