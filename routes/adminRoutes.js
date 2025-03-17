@@ -5,13 +5,13 @@ import {
   getUsers,
   updateUserRole
 } from '../controllers/adminController.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
+import { authMiddleware, authenticate } from '../middleware/authMiddleware.js';
 import { roleMiddleware } from '../middleware/roleMiddleware.js';
 
 const router = express.Router();
 
 // Apply auth and admin role middleware to all routes
-router.use(authMiddleware);
+router.use(authenticate);
 router.use(roleMiddleware('ADMIN'));
 
 // Dashboard statistics

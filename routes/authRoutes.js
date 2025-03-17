@@ -9,7 +9,7 @@ import {
   resetPassword,
   getCurrentUser
 } from '../controllers/authController.js';
-import { authenticate } from '../middleware/authMiddleware.js';
+import { authMiddleware, authenticate } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
