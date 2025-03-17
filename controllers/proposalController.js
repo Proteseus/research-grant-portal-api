@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { uploadFile } from '../utils/fileUpload.js';
+import { proposalUpload, getFileUrl } from '../utils/fileUpload.js';
 import { sendNotification } from '../utils/notificationService.js';
 
 const prisma = new PrismaClient();
@@ -10,8 +10,14 @@ export const createProposal = async (req, res) => {
     const { callId, title, abstract } = req.body;
     const researcherId = req.user.id;
 
-    // Upload document
-    const documentUrl = await uploadFile(req.file);
+    // Handle file upload
+    proposalUpload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
+      
+      const documentUrl = getFileUrl(req.file.filename);
+    });
 
     const proposal = await prisma.proposal.create({
       data: {
@@ -215,8 +221,14 @@ export const createProposalRevision = async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized access' });
     }
 
-    // Upload revised document
-    const revisedDocumentUrl = await uploadFile(req.file);
+    // Handle file upload for revision
+    proposalUpload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
+      
+      const revisedDocumentUrl = getFileUrl(req.file.filename);
+    });
 
     const revision = await prisma.proposalRevision.create({
       data: {
