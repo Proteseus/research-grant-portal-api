@@ -84,6 +84,7 @@ export const login = async (req, res) => {
       token,
       user: {
         id: user.id,
+        fullName: user.fullName,
         email: user.email,
         role: user.role
       }
@@ -155,7 +156,7 @@ export const logout = async (req, res) => {
 // Verify email
 export const verifyEmail = async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token } = req.query;
     
     // Verify token (this would typically be a JWT or similar)
     const decoded = jwt.verify(token, JWT_SECRET);
