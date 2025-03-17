@@ -4,6 +4,11 @@ FROM node:18
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
+# Create uploads directory and volume
+RUN mkdir -p /usr/src/app/uploads/proposals
+
+VOLUME /usr/src/app/uploads
+
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
