@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
-  secure: process.env.EMAIL_SECURE === 'true',
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD
@@ -62,6 +62,9 @@ export const sendVerificationEmail = async (userId, token) => {
       'Verify your email address',
       `Please click the following link to verify your email: ${verificationLink}`
     );
+
+    // Create in-app notification
+    await createInAppNotification(userId, verificationLink);
   } catch (error) {
     console.error('Error sending verification email:', error);
     throw error;
