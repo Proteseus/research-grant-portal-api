@@ -6,9 +6,9 @@ const prisma = new PrismaClient();
 export const getStats = async (req, res) => {
   try {
     const [proposalsCount, usersCount, callsCount] = await Promise.all([
-      prisma.proposal.count(),
-      prisma.user.count(),
-      prisma.callForProposal.count()
+      prisma.proposal.count({ where: { status: "UNDER_REVIEW" } }),
+      prisma.user.count({ where: { role: 'RESEARCHER' } }),
+      prisma.callForProposal.count({ where: { deadline: { gt: new Date() } } })
     ]);
 
     const proposalStatusStats = await prisma.proposal.groupBy({
