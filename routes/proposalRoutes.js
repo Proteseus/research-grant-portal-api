@@ -9,14 +9,14 @@ import {
   getProposalRevisions,
   updateProposalStatus
 } from '../controllers/proposalController.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
+import { authMiddleware, authenticate } from '../middleware/authMiddleware.js';
 import { roleMiddleware } from '../middleware/roleMiddleware.js';
 import { proposalUpload } from '../utils/fileUpload.js';
 
 const router = express.Router();
 
 // Apply auth middleware to all proposal routes
-router.use(authMiddleware);
+router.use(authenticate);
 
 // Researcher-only routes
 router.post(
