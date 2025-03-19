@@ -11,7 +11,7 @@ import {
 } from '../controllers/proposalController.js';
 import { authMiddleware, authenticate } from '../middleware/authMiddleware.js';
 import { roleMiddleware } from '../middleware/roleMiddleware.js';
-import { proposalUpload } from '../utils/fileUpload.js';
+// import { proposalUpload } from '../utils/fileUpload.js';
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.use(authenticate);
 router.post(
   '/',
   roleMiddleware(['RESEARCHER']),
-  proposalUpload,
+  // proposalUpload,
   createProposal
 );
 
@@ -41,7 +41,7 @@ router.delete(
 router.post(
   '/:id/revisions',
   roleMiddleware(['RESEARCHER']),
-  proposalUpload,
+  // proposalUpload,
   createProposalRevision
 );
 

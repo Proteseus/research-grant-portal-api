@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { proposalUpload, getFileUrl } from '../utils/fileUpload.js';
+import { getFileUrl, parseProposalForm } from '../utils/fileUpload.js';
 import { sendNotification } from '../utils/notificationService.js';
 
 const prisma = new PrismaClient();
@@ -7,33 +7,31 @@ const prisma = new PrismaClient();
 // Submit new proposal
 export const createProposal = async (req, res) => {
   try {
-    const { callId, title, abstract } = req.body;
     const researcherId = req.user.id;
-
-    // Handle file upload
-    proposalUpload(req, res, async (err) => {
-      if (err) {
-        return res.status(400).json({ error: err.message });
-      }
-      
-      const documentUrl = getFileUrl(req.file.filename);
-    });
-
+    
+    console.log('Starting proposal creation...');
+    
+    const { fields, file } = await parseProposalForm(req);
+    
+    // console.log('Form fields:', fields);
+    console.log('File:', file);
+    
+    // Get first value from arrays for each field
+    const documentUrl = getFileUrl(file[0].newFilename);
+    
     const proposal = await prisma.proposal.create({
       data: {
         researcherId,
-        callId,
-        title,
-        abstract,
+        callId: fields.callId[0],      // Get first value from array
+        title: fields.title[0],        // Get first value from array
+        abstract: fields.abstract[0],   // Get first value from array
         documentUrl,
-        status: 'SUBMITTED'
       }
     });
 
-    // Send notification to admin
     await sendNotification(
       req.user.id,
-      `New proposal submitted: ${title}`
+      `New proposal submitted: ${fields.title[0]}`
     );
 
     res.status(201).json({
@@ -43,7 +41,9 @@ export const createProposal = async (req, res) => {
     });
   } catch (error) {
     console.error('Create proposal error:', error);
-    res.status(500).json({ error: 'Failed to create proposal' });
+    res.status(400).json({ 
+      error: error.message || 'Failed to create proposal'
+    });
   }
 };
 
@@ -206,8 +206,7 @@ export const deleteProposal = async (req, res) => {
 export const createProposalRevision = async (req, res) => {
   try {
     const { id } = req.params;
-    const { comments } = req.body;
-
+    
     // Verify proposal exists and belongs to user
     const existingProposal = await prisma.proposal.findUnique({
       where: { id }
@@ -221,33 +220,26 @@ export const createProposalRevision = async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized access' });
     }
 
-    // Handle file upload for revision
-    proposalUpload(req, res, async (err) => {
-      if (err) {
-        return res.status(400).json({ error: err.message });
-      }
-      
-      const revisedDocumentUrl = getFileUrl(req.file.filename);
-    });
-
+    const { fields, file } = await parseProposalForm(req);
+    const revisedDocumentUrl = getFileUrl(file.newFilename);
+    
     const revision = await prisma.proposalRevision.create({
       data: {
         proposalId: id,
         revisedDocumentUrl,
-        comments
+        comments: fields.comments?.[0] || '' // Get first value from array with fallback
       }
     });
 
-    // Update proposal status
     await prisma.proposal.update({
       where: { id },
-      data: { status: 'REVISION_REQUESTED' }
+      data: { status: 'REVISION_SUBMITTED' }
     });
 
     res.status(201).json(revision);
   } catch (error) {
     console.error('Create revision error:', error);
-    res.status(500).json({ error: 'Failed to create revision' });
+    res.status(400).json({ error: error.message });
   }
 };
 
