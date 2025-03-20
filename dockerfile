@@ -5,7 +5,7 @@ FROM node:18
 WORKDIR /usr/src/app
 
 # Create uploads directory and volume
-RUN mkdir -p /usr/src/app/uploads/proposals
+RUN mkdir -p /usr/src/app/uploads
 
 VOLUME /usr/src/app/uploads
 

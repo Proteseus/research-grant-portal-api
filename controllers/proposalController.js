@@ -14,7 +14,7 @@ export const createProposal = async (req, res) => {
     const { fields, file } = await parseProposalForm(req);
     
     // console.log('Form fields:', fields);
-    console.log('File:', file);
+    // console.log('File:', file);
     
     // Get first value from arrays for each field
     const documentUrl = getFileUrl(file[0].newFilename);
