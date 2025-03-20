@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 # Create uploads directory and volume
 RUN mkdir -p /usr/src/app/uploads
 
-VOLUME /usr/src/app/uploads
+VOLUME /app/uploads
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
