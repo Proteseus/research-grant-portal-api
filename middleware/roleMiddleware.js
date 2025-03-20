@@ -13,6 +13,3 @@ export const roleMiddleware = (allowedRoles) => {
     next();
   };
 };
-
-// Usage example:
-// router.get('/admin', roleMiddleware(['ADMIN']), adminController);
