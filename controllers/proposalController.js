@@ -13,19 +13,18 @@ export const createProposal = async (req, res) => {
     
     const { fields, file } = await parseProposalForm(req);
     
-    // console.log('Form fields:', fields);
-    // console.log('File:', file);
-    
-    // Get first value from arrays for each field
-    const documentUrl = getFileUrl(file[0].newFilename);
+    console.log('Form fields:', fields);
+    console.log('File:', file);
     
     const proposal = await prisma.proposal.create({
       data: {
         researcherId,
-        callId: fields.callId[0],      // Get first value from array
-        title: fields.title[0],        // Get first value from array
-        abstract: fields.abstract[0],   // Get first value from array
-        documentUrl,
+        callId: fields.callId[0],
+        title: fields.title[0],
+        abstract: fields.abstract[0],
+        documentUrl: file.url,           // Use Cloudinary URL
+        documentPublicId: file.publicId, // Store public ID for future management
+        status: fields.status?.[0] || 'SUBMITTED'
       }
     });
 
@@ -221,13 +220,13 @@ export const createProposalRevision = async (req, res) => {
     }
 
     const { fields, file } = await parseProposalForm(req);
-    const revisedDocumentUrl = getFileUrl(file.newFilename);
     
     const revision = await prisma.proposalRevision.create({
       data: {
         proposalId: id,
-        revisedDocumentUrl,
-        comments: fields.comments?.[0] || '' // Get first value from array with fallback
+        revisedDocumentUrl: file.url,
+        revisedDocumentPublicId: file.publicId,
+        comments: fields.comments?.[0] || ''
       }
     });
 

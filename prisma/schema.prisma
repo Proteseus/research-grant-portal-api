@@ -55,6 +55,7 @@ model Proposal {
   title           String
   abstract        String
   documentUrl     String
+  documentPublicId String?
   status          ProposalStatus @default(SUBMITTED)
   rejectionReason String?
   createdAt       DateTime @default(now())
@@ -65,9 +66,9 @@ model Proposal {
 enum ProposalStatus {
   SUBMITTED
   UNDER_REVIEW
-  REVISION_REQUESTED
   ACCEPTED
   REJECTED
+  REVISION_REQUESTED
 }
 
 model ProposalRevision {
@@ -75,6 +76,7 @@ model ProposalRevision {
   proposalId        String
   proposal          Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   revisedDocumentUrl String
+  revisedDocumentPublicId String?
   comments          String?
   submittedAt       DateTime @default(now())
 }

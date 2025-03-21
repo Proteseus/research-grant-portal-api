@@ -1,6 +1,7 @@
 import formidable from 'formidable';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { uploadToCloudinary } from './cloudinaryHandler.js';
 
 export const parseProposalForm = (req) => {
   return new Promise((resolve, reject) => {
@@ -8,21 +9,14 @@ export const parseProposalForm = (req) => {
       uploadDir: 'uploads',
       keepExtensions: true,
       maxFileSize: 5 * 1024 * 1024, // 5MB
-      filename: (name, ext, part, form) => {
-        const originalName = path.basename(part.originalFilename, path.extname(part.originalFilename));
-        const date = new Date();
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-        const year = date.getFullYear();
-        return `${originalName}-${day}-${month}-${year}${path.extname(part.originalFilename)}`;
-      },
+      filename: (name, ext) => `${uuidv4()}${ext}`,
       filter: ({ mimetype }) => {
         // Allow only PDF files
         return mimetype === 'application/pdf';
       }
     });
 
-    form.parse(req, (err, fields, files) => {
+    form.parse(req, async (err, fields, files) => {
       if (err) {
         console.error('Form parsing error:', err);
         return reject(err);
@@ -41,10 +35,21 @@ export const parseProposalForm = (req) => {
         return reject(new Error('Document file is required'));
       }
 
-      resolve({
-        fields,
-        file: files.document
-      });
+      try {
+        // Upload file to Cloudinary
+        const cloudinaryResult = await uploadToCloudinary(files.document[0].filepath);
+        
+        resolve({
+          fields,
+          file: {
+            ...files.document,
+            url: cloudinaryResult.url,
+            publicId: cloudinaryResult.publicId
+          }
+        });
+      } catch (uploadError) {
+        reject(uploadError);
+      }
     });
   });
 };
