@@ -44,7 +44,7 @@ export const parseProposalForm = (req) => {
           file: {
             ...files.document,
             url: cloudinaryResult.url,
-            publicId: cloudinaryResult.publicId
+            publicId: cloudinaryResult.secure_url
           }
         });
       } catch (uploadError) {

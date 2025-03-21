@@ -15,7 +15,10 @@ export const uploadToCloudinary = async (filePath, folder = 'researcher/proposal
       folder,
       resource_type: 'raw',
       use_filename: true,
-      unique_filename: true
+      unique_filename: true,
+      flags: 'attachment',
+      format: 'pdf',
+      type: 'private'
     });
 
     // Delete the local file after successful upload
@@ -23,7 +26,8 @@ export const uploadToCloudinary = async (filePath, folder = 'researcher/proposal
 
     return {
       url: result.secure_url,
-      publicId: result.public_id
+      publicId: result.public_id,
+      secure_url: result.secure_url
     };
   } catch (error) {
     // Delete the local file if upload fails

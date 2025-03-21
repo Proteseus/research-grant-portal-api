@@ -13,8 +13,8 @@ export const createProposal = async (req, res) => {
     
     const { fields, file } = await parseProposalForm(req);
     
-    console.log('Form fields:', fields);
-    console.log('File:', file);
+    // console.log('Form fields:', fields);
+    // console.log('File:', file);
     
     const proposal = await prisma.proposal.create({
       data: {
