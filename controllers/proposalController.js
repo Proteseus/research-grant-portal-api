@@ -9,12 +9,12 @@ export const createProposal = async (req, res) => {
   try {
     const researcherId = req.user.id;
     
-    console.log('Starting proposal creation...');
+    // console.log('Starting proposal creation...');
     
     const { fields, file } = await parseProposalForm(req);
     
-    console.log('Form fields:', fields);
-    console.log('File:', file);
+    // console.log('Form fields:', fields);
+    // console.log('File:', file);
     
     const proposal = await prisma.proposal.create({
       data: {
