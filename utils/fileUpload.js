@@ -34,7 +34,7 @@ export const parseProposalForm = (req) => {
         // Upload file to Dropbox
         const dropboxResult = await uploadToDropbox(
           files.document[0].filepath,
-          files.document[0].originalFilename
+          `${files.document[0].originalFilename.replace(/\.pdf$/i, '')}-${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.pdf`
         );
         
         resolve({
