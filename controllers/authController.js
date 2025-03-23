@@ -166,11 +166,10 @@ export const verifyEmail = async (req, res) => {
       where: { id: decoded.userId },
       data: { verified: true }
     });
-
-    res.json({ message: 'Email verified successfully' });
+    res.status(200).json({ message: 'Email verified successfully' });
   } catch (error) {
     console.error('Email verification error:', error);
-    res.status(500).json({ error: 'Email verification failed' });
+    res.status(400).json({ error: 'Email verification failed' });
   }
 };
 
