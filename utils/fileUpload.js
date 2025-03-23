@@ -1,15 +1,10 @@
 import formidable from 'formidable';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import { uploadToCloudinary } from './cloudinaryHandler.js';
+import { uploadToDropbox } from './dropboxHandler.js';
 
 export const parseProposalForm = (req) => {
   return new Promise((resolve, reject) => {
     const form = formidable({
-      uploadDir: 'uploads',
-      keepExtensions: true,
       maxFileSize: 5 * 1024 * 1024, // 5MB
-      filename: (name, ext) => `${uuidv4()}${ext}`,
       filter: ({ mimetype }) => {
         // Allow only PDF files
         return mimetype === 'application/pdf';
@@ -36,15 +31,19 @@ export const parseProposalForm = (req) => {
       }
 
       try {
-        // Upload file to Cloudinary
-        const cloudinaryResult = await uploadToCloudinary(files.document[0].filepath);
+        // Upload file to Dropbox
+        const dropboxResult = await uploadToDropbox(
+          files.document[0].filepath,
+          files.document[0].originalFilename
+        );
         
         resolve({
           fields,
           file: {
             ...files.document,
-            url: cloudinaryResult.url,
-            publicId: cloudinaryResult.secure_url
+            url: dropboxResult.url,
+            path: dropboxResult.path,
+            id: dropboxResult.id
           }
         });
       } catch (uploadError) {

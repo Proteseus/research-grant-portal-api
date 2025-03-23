@@ -55,10 +55,11 @@ model Proposal {
   title           String
   abstract        String
   documentUrl     String
-  documentPublicId String?
+  documentKey     String?
   status          ProposalStatus @default(SUBMITTED)
   rejectionReason String?
   createdAt       DateTime @default(now())
+  documentPath    String?
 
   revisions       ProposalRevision[]
 }
@@ -76,9 +77,10 @@ model ProposalRevision {
   proposalId        String
   proposal          Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   revisedDocumentUrl String
-  revisedDocumentPublicId String?
+  revisedDocumentKey String?
   comments          String?
   submittedAt       DateTime @default(now())
+  revisedDocumentPath String?
 }
 
 model Notification {

@@ -13,8 +13,8 @@ export const createProposal = async (req, res) => {
     
     const { fields, file } = await parseProposalForm(req);
     
-    // console.log('Form fields:', fields);
-    // console.log('File:', file);
+    console.log('Form fields:', fields);
+    console.log('File:', file);
     
     const proposal = await prisma.proposal.create({
       data: {
@@ -22,8 +22,9 @@ export const createProposal = async (req, res) => {
         callId: fields.callId[0],
         title: fields.title[0],
         abstract: fields.abstract[0],
-        documentUrl: file.url,           // Use Cloudinary URL
-        documentPublicId: file.publicId, // Store public ID for future management
+        documentUrl: file.url,
+        documentPath: file.path, // Store Dropbox path for future reference
+        documentKey: file.id,     // Store Dropbox file ID
         status: fields.status?.[0] || 'SUBMITTED'
       }
     });
@@ -206,7 +207,6 @@ export const createProposalRevision = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Verify proposal exists and belongs to user
     const existingProposal = await prisma.proposal.findUnique({
       where: { id }
     });
@@ -225,7 +225,7 @@ export const createProposalRevision = async (req, res) => {
       data: {
         proposalId: id,
         revisedDocumentUrl: file.url,
-        revisedDocumentPublicId: file.publicId,
+        revisedDocumentKey: file.key,
         comments: fields.comments?.[0] || ''
       }
     });
